@@ -167,4 +167,28 @@ Expected output:
 
 ---
 
+### Example 5 — Tool failure (Graceful Degradation)
+
+Input:
+RO# 998877 | VIN: 1G1FY6S0XN0000123 | 2022 Chevrolet Bolt EV | Mileage: 15,000 | Repair: Replaced high-voltage battery module. | Parts: 24299461 | Labor: 4.2 hrs
+(Assume the `check_warranty_coverage` tool returns an error or fails to respond)
+
+Expected output:
+{
+  "vin": "1G1FY6S0XN0000123",
+  "year": 2022,
+  "make": "Chevrolet",
+  "model": "Bolt EV",
+  "mileage": 15000,
+  "repair_description": "Replaced high-voltage battery module",
+  "part_number": "24299461",
+  "labor_hours": 4.2,
+  "vin_valid": true,
+  "vin_issues": [],
+  "coverage_eligible": false,
+  "coverage_reason": "Warranty check could not be completed: the internal validation tool returned an error. Claim has been flagged for manual review to ensure customer coverage is not unfairly denied."
+}
+
+---
+
 Now process the following repair order:
