@@ -70,6 +70,12 @@ The project is built on **FastAPI** to leverage the modern Python asynchronous e
 - **Concurrency for I/O:** LLM calls and tool executions are I/O-bound operations. Using an `async` stack allows the server to handle multiple concurrent requests efficiently without blocking on a single agent's reasoning loop.
 - **Type Safety & Validation:** By using Pydantic models for both the domain and the API layer, we get automatic request validation and clear, self-documenting schemas (OpenAPI/Swagger) out of the box—a significant step up from traditional synchronous frameworks like Flask.
 
+### 5. Safety & Error Handling
+The system implements a "fail-safe" rather than a "catch-all" approach:
+- **Input Guards:** Tools use strict type and presence checks (e.g., `isinstance(year, int)`) to return structured error messages back to the agent instead of raising Python exceptions. This allows the agent to reason about the failure.
+- **Prompt-Level Recovery:** The agent's prompt includes explicit instructions (**Step 3a**) on how to handle tool failures, ensuring it still returns a valid JSON payload with a clear `coverage_reason`.
+- **Global Safety Net:** FastAPI exception handlers catch `ValueError` (for agent parsing issues) and generic `Exception` (for system crashes), returning clean `422` or `500` responses to the client while logging full stack traces for developers.
+
 ---
 
 ## Testing
@@ -78,3 +84,8 @@ Unit tests cover tool logic, memory database operations, and agent parsing:
 export PYTHONPATH=$PYTHONPATH:$(pwd)/src
 uv run pytest tests
 ```
+
+---
+
+## Credits
+This project was completed using **Cursor**, **Gemini**, and **Claude**.
