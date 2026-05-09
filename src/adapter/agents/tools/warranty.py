@@ -21,6 +21,8 @@ def check_warranty_coverage(
         mileage: The current odometer reading.
         part_number: The primary part number being replaced.
     """
+    # NOTE: part_number is not used for anything in this mocked tool
+
     # Reasonable stub/mock for testing
     if "1G1" in vin and mileage < 100000:
         return {
