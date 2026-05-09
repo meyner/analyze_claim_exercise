@@ -94,7 +94,9 @@ uv run pytest tests
 This project was developed using a "Human-in-the-loop" AI-augmented workflow, leveraging specialized agents to accelerate development:
 
 - **Cursor:** Used as the primary IDE and orchestration layer. Its agentic capabilities allowed for rapid refactoring, such as moving the database logic from the presenter to the feature layer and ensuring architectural consistency across the project.
-- **Gemini (via Google GenAI SDK):** Served as the "brain" of the application. Its native support for **Automatic Function Calling (AFC)** and structured JSON output (via `response_json_schema`) significantly reduced the amount of manual "glue code" required to connect the LLM to the Python tools.
-- **Claude:** Utilized for high-level architectural planning, prompt engineering, and complex logic verification (such as the VIN checksum algorithm). 
+- **Gemini 3 Flash:** Served as the "brain" of the application. Its native support for **Automatic Function Calling (AFC)** and structured JSON output (via `response_json_schema`) significantly reduced the amount of manual "glue code" required to connect the LLM to the Python tools.
+- **Claude (Sonnet 4.6):** Utilized for high-level architectural planning, prompt engineering, and complex logic verification (such as the VIN checksum algorithm).
+
+At times, both models were used to cross-reference each other on certain logic pieces, which allowed me to catch errors or inconsistencies. Approaching the same problem from a fresh angle proved invaluable for identifying edge cases and ensuring robustness.
 
 By using these tools in concert, we were able to implement a robust, tested, and observable system with a clean separation of concerns in a fraction of the time a traditional development cycle would require.
