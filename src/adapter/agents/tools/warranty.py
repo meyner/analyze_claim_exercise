@@ -23,6 +23,11 @@ def check_warranty_coverage(
     """
     # NOTE: part_number is not used for anything in this mocked tool
 
+    if not vin or not isinstance(vin, str):
+        return {"eligible": False, "reason": "Warranty check failed: VIN is missing or invalid.", "warranty_type": "None"}
+    if not isinstance(mileage, int):
+        return {"eligible": False, "reason": f"Warranty check failed: mileage must be an integer, got {type(mileage).__name__}.", "warranty_type": "None"}
+
     # Reasonable stub/mock for testing
     if "1G1" in vin and mileage < 100000:
         return {

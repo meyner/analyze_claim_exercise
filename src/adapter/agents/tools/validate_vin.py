@@ -85,6 +85,13 @@ def validate_vin(vin: str, make: str, model: str, year: int) -> dict:
             "vin_issues": list[str]  # empty list if valid
         }
     """
+    if not vin or not isinstance(vin, str):
+        return {"vin_valid": False, "vin_issues": ["VIN is missing or not a valid string."]}
+    if not make or not isinstance(make, str):
+        return {"vin_valid": False, "vin_issues": ["Make is missing or not a valid string."]}
+    if not isinstance(year, int):
+        return {"vin_valid": False, "vin_issues": [f"Year must be an integer, got: {type(year).__name__}."]}
+
     issues = []
 
     # Basic length check

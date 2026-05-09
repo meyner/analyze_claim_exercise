@@ -1,6 +1,21 @@
 import pytest
 from adapter.agents.tools.validate_vin import validate_vin, calculate_vin_checksum
 
+def test_vin_none_input():
+    result = validate_vin(None, "Chevrolet", "Bolt EV", 2022)
+    assert result["vin_valid"] is False
+    assert "missing or not a valid string" in result["vin_issues"][0]
+
+def test_vin_none_make():
+    result = validate_vin("1G1FY6S0XN0000123", None, "Bolt EV", 2022)
+    assert result["vin_valid"] is False
+    assert "Make is missing" in result["vin_issues"][0]
+
+def test_vin_invalid_year_type():
+    result = validate_vin("1G1FY6S0XN0000123", "Chevrolet", "Bolt EV", "2022")
+    assert result["vin_valid"] is False
+    assert "Year must be an integer" in result["vin_issues"][0]
+
 def test_vin_length_too_short():
     result = validate_vin("123", "Chevrolet", "Bolt EV", 2022)
     assert result["vin_valid"] is False

@@ -1,6 +1,22 @@
 import pytest
 from adapter.agents.tools.warranty import check_warranty_coverage
 
+def test_warranty_none_vin():
+    result = check_warranty_coverage(
+        vin=None, make="Chevrolet", model="Bolt EV",
+        year=2022, mileage=12340, part_number="24299461"
+    )
+    assert result["eligible"] is False
+    assert "VIN is missing or invalid" in result["reason"]
+
+def test_warranty_invalid_mileage_type():
+    result = check_warranty_coverage(
+        vin="1G1FY6S0XN0000123", make="Chevrolet", model="Bolt EV",
+        year=2022, mileage="12340", part_number="24299461"
+    )
+    assert result["eligible"] is False
+    assert "mileage must be an integer" in result["reason"]
+
 def test_warranty_eligible_chevrolet():
     # 1G1 is Chevrolet, mileage < 100,000
     result = check_warranty_coverage(

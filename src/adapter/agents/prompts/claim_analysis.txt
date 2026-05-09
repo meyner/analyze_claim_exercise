@@ -38,6 +38,14 @@ Use the tool result alongside the VIN validation outcome to compose the `coverag
 - `coverage_eligible` comes directly from the tool result
 - `coverage_reason` must reflect BOTH the warranty tool result AND any VIN issues (e.g. if the VIN is invalid, note that the coverage determination may be affected)
 
+### STEP 3a — Handle tool errors gracefully
+
+If a tool call fails or returns an unexpected result:
+- Do NOT retry the tool call.
+- Set `coverage_eligible` to `false`.
+- Set `coverage_reason` to a clear explanation of what failed (e.g. "Warranty check could not be completed: tool returned an error. Claim flagged for manual review.").
+- Still populate all extraction fields with whatever was successfully parsed.
+
 ### STEP 4 — Return the final JSON
 
 Return ONLY valid JSON matching the exact structure below. Do not include prose, markdown fences, or commentary.
@@ -66,11 +74,11 @@ Return ONLY valid JSON matching the exact structure below. Do not include prose,
 ### Example 1 — All fields present, valid VIN, coverage granted
 
 Input:
-RO# 847291 | VIN: 1G1FY6S00N0000123 | 2022 Chevrolet Bolt EV | Mileage: 12,340 | Repair: Replaced high-voltage battery module. | Parts: 24299461 | Labor: 4.2 hrs
+RO# 847291 | VIN: 1G1FY6S0XN0000123 | 2022 Chevrolet Bolt EV | Mileage: 12,340 | Repair: Replaced high-voltage battery module. | Parts: 24299461 | Labor: 4.2 hrs
 
 Expected output:
 {
-  "vin": "1G1FY6S00N0000123",
+  "vin": "1G1FY6S0XN0000123",
   "year": 2022,
   "make": "Chevrolet",
   "model": "Bolt EV",

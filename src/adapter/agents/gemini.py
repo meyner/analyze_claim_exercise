@@ -33,8 +33,10 @@ class GeminiAgent:
         )
 
         text = response.text
+        if not text:
+            raise ValueError("Model returned an empty response. The request may have been blocked or the model failed to generate output.")
+
         if text.startswith("```"):
-            # Strip markdown code blocks
             lines = text.splitlines()
             if lines[0].startswith("```"):
                 lines = lines[1:]
@@ -45,4 +47,4 @@ class GeminiAgent:
         try:
             return json.loads(text)
         except json.JSONDecodeError:
-            raise ValueError(f"Failed to parse structured response: {response.text}")
+            raise ValueError(f"Model returned non-JSON output: {response.text[:500]}")
