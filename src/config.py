@@ -9,7 +9,10 @@ class Settings(BaseSettings):
     gemini_model: str = "gemini-2.5-flash"
     
     model_config = SettingsConfigDict(
-        env_file=os.path.join(BASE_DIR, ".env.local"),
+        env_file=[
+            os.path.join(BASE_DIR, ".env.local"),
+            ".env",
+        ],
         env_file_encoding="utf-8",
         extra="ignore"
     )

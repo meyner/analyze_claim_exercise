@@ -22,10 +22,21 @@ uv sync
 ```
 
 ### Running the API
+
+#### Option A: Local Development (uv)
 ```bash
 export PYTHONPATH=$PYTHONPATH:$(pwd)/src
 uv run python src/main.py
 ```
+
+#### Option B: Docker (Recommended)
+The easiest way to run the API is using Docker Compose. A helper script is provided to manage the environment and build the container:
+
+```bash
+./run_docker.sh
+```
+*Note: The script will automatically detect your `src/.env.local` and use it for the container.*
+
 The API will be available at `http://localhost:8000`. You can view the interactive docs at `/docs`.
 
 ---
