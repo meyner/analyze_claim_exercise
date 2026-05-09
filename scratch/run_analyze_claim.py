@@ -4,7 +4,7 @@ import asyncio
 import json
 
 # Add src to path so we can import modules
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../src")))
 
 from feature.analyze_claim import ClaimAnalysisFeature
 from config import settings
