@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger(__name__)
+
 def check_warranty_coverage(
     vin: str,
     make: str,
@@ -21,6 +25,7 @@ def check_warranty_coverage(
         mileage: The current odometer reading.
         part_number: The primary part number being replaced.
     """
+    logger.info(f"tool_call check_warranty_coverage vin={vin} mileage={mileage}")
     # NOTE: part_number is not used for anything in this mocked tool
 
     if not vin or not isinstance(vin, str):

@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger(__name__)
+
 # World Manufacturer Identifier (WMI) prefix -> make
 WMI_MAKE_MAP = {
     "1G1": "Chevrolet",
@@ -85,6 +89,7 @@ def validate_vin(vin: str, make: str, model: str, year: int) -> dict:
             "vin_issues": list[str]  # empty list if valid
         }
     """
+    logger.info(f"tool_call validate_vin vin={vin} make={make} year={year}")
     if not vin or not isinstance(vin, str):
         return {"vin_valid": False, "vin_issues": ["VIN is missing or not a valid string."]}
     if not make or not isinstance(make, str):
