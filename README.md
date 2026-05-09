@@ -89,6 +89,9 @@ The system implements a "fail-safe" rather than a "catch-all" approach:
 - **Prompt-Level Recovery:** The agent's prompt includes explicit instructions (**Step 3a**) on how to handle tool failures, ensuring it still returns a valid JSON payload with a clear `coverage_reason`.
 - **Global Safety Net:** FastAPI exception handlers catch `ValueError` (for agent parsing issues) and generic `Exception` (for system crashes), returning clean `422` or `500` responses to the client while logging full stack traces for developers.
 
+### 6. Model Selection: Gemini 2.5 Flash
+For the core agentic reasoning task, **Gemini 2.5 Flash** was selected as the primary LLM. It was chosen over alternatives like GPT-4o Mini based on [comparative performance metrics](https://artificialanalysis.ai/models/comparisons/gemini-2-5-flash-preview-09-2025-reasoning-vs-gpt-4o-mini) that demonstrated superior reasoning capabilities for complex, tool-heavy workflows. Its native support for **Automatic Function Calling (AFC)** and structured JSON output (via `response_json_schema`) significantly reduced the complexity of the "glue code" required to connect the model to the Python toolset.
+
 ---
 
 ## Testing
@@ -105,7 +108,7 @@ uv run pytest tests
 This project was developed using a "Human-in-the-loop" AI-augmented workflow, leveraging specialized agents to accelerate development:
 
 - **Cursor:** Used as the primary IDE and orchestration layer. Its agentic capabilities allowed for rapid refactoring, such as moving the database logic from the presenter to the feature layer and ensuring architectural consistency across the project.
-- **Gemini 3 Flash:** Served as the "brain" of the application. Its native support for **Automatic Function Calling (AFC)** and structured JSON output (via `response_json_schema`) significantly reduced the amount of manual "glue code" required to connect the LLM to the Python tools.
+- **Gemini 3 Flash:** Utilized as the primary development agent within Cursor to accelerate coding, debugging, and documentation tasks.
 - **Claude (Sonnet 4.6):** Utilized for high-level architectural planning, prompt engineering, and complex logic verification (such as the VIN checksum algorithm).
 
 At times, both models were used to cross-reference each other on certain logic pieces, which allowed me to catch errors or inconsistencies. Approaching the same problem from a fresh angle proved invaluable for identifying edge cases and ensuring robustness.
