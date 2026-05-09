@@ -3,6 +3,7 @@ from typing import Optional
 
 
 class AnalyzeClaimResponse(BaseModel):
+    claim_id: str
     vin: Optional[str] = None
     year: Optional[int] = None
     make: Optional[str] = None
