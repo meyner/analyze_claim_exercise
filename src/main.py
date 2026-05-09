@@ -1,5 +1,6 @@
-import requests
+import uvicorn
 
-r = requests.get("https://httpbin.org/get")
+from presenter.rest_api.app import app
 
-print(r.status_code)
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)
