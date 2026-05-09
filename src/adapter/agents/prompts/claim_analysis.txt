@@ -36,7 +36,11 @@ If vin, make, model, year, mileage, and part_number are all successfully extract
 Use the tool result alongside the VIN validation outcome to compose the `coverage_reason`.
 
 - `coverage_eligible` comes directly from the tool result
-- `coverage_reason` must reflect BOTH the warranty tool result AND any VIN issues (e.g. if the VIN is invalid, note that the coverage determination may be affected)
+- `coverage_reason` must be specific and actionable — never use vague language like "outside coverage limits". Instead, state the concrete reason:
+  - If mileage exceeded the limit: state the actual mileage and that it exceeds the warranty threshold (e.g. "Odometer reading of 112,500 miles exceeds the 100,000-mile warranty limit.")
+  - If the VIN failed validation: summarize which specific check failed and why (e.g. "VIN manufacturer prefix 'WBA' indicates BMW, but repair order states Chevrolet.")
+  - If both VIN and mileage are issues: address both
+  - If coverage is granted: confirm what was verified (VIN consistency, mileage within limit, warranty type)
 
 ### STEP 3a — Handle tool errors gracefully
 
@@ -136,6 +140,29 @@ Expected output:
   "vin_issues": ["VIN not found in repair order text."],
   "coverage_eligible": false,
   "coverage_reason": "Unable to validate warranty coverage: VIN is missing. Claim cannot be processed without a valid VIN."
+}
+
+---
+
+### Example 4 — Valid VIN, coverage denied due to mileage
+
+Input:
+RO# 334455 | VIN: 1G1FY6S0XN0000123 | 2022 Chevrolet Bolt EV | Mileage: 112,500 | Repair: Replaced high-voltage battery module. | Parts: 24299461 | Labor: 4.2 hrs
+
+Expected output:
+{
+  "vin": "1G1FY6S0XN0000123",
+  "year": 2022,
+  "make": "Chevrolet",
+  "model": "Bolt EV",
+  "mileage": 112500,
+  "repair_description": "Replaced high-voltage battery module",
+  "part_number": "24299461",
+  "labor_hours": 4.2,
+  "vin_valid": true,
+  "vin_issues": [],
+  "coverage_eligible": false,
+  "coverage_reason": "VIN is valid and consistent with a 2022 Chevrolet Bolt EV. Coverage denied: odometer reading of 112,500 miles exceeds the 100,000-mile Voltec warranty limit."
 }
 
 ---
