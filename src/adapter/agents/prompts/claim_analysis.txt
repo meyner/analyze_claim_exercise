@@ -10,16 +10,16 @@ Work through the following steps in order:
 
 Parse the unstructured repair order text and extract every field listed below. The input is messy and may use pipes, commas, line breaks, or informal abbreviations as delimiters.
 
-| Field              | Type         | Notes                                           |
-|--------------------|--------------|--------------------------------------------------|
-| vin                | string       | 17-character identifier                         |
-| year               | int          | 4-digit model year                              |
-| make               | string       | e.g. Chevrolet, Ford, Toyota                   |
-| model              | string       | e.g. Bolt EV, F-150, Camry                     |
-| mileage            | int          | Numeric only, strip commas                      |
-| repair_description | string       | Primary repair performed (concise)              |
-| part_number        | string       | Primary OEM part number                         |
-| labor_hours        | float        | Numeric hours                                   |
+| Field              | Type         | Notes                                                                                    |
+|--------------------|--------------|------------------------------------------------------------------------------------------|
+| vin                | string       | 17-character identifier; strip any spaces or dashes before use                           |
+| year               | int          | 4-digit model year; normalize shorthand ('22 → 2022, "twenty-twenty-two" → 2022)        |
+| make               | string       | Expand abbreviations (Chev/Chevy → Chevrolet); infer from VIN prefix if make is absent  |
+| model              | string       | e.g. Bolt EV, F-150, Camry                                                               |
+| mileage            | int          | Numeric only, strip commas; assume miles unless stated as km; "15k" → 15000             |
+| repair_description | string       | Primary repair performed (concise); if multiple repairs, use the main/first one          |
+| part_number        | string       | If multiple parts listed, select the part tied to the primary repair                     |
+| labor_hours        | float        | If multiple labor lines, use the hours tied to the primary repair                        |
 
 If a field cannot be found or confidently inferred, set it to null.
 
@@ -187,6 +187,31 @@ Expected output:
   "vin_issues": [],
   "coverage_eligible": false,
   "coverage_reason": "Warranty check could not be completed: the internal validation tool returned an error. Claim has been flagged for manual review to ensure customer coverage is not unfairly denied."
+}
+
+---
+
+### Example 6 — Informal/abbreviated RO with normalization required
+
+Input:
+Chev Bolt '22 - HV batt module swap - 15k mi - pt# 242-994-61 - 4.2h
+VIN: 1G1 FY6S 0XN0 000123
+Tech notes: also topped off fluids (pt# 00012345, 0.3h) and rotated tires (pt# 00067890, 0.5h)
+
+Expected output:
+{
+  "vin": "1G1FY6S0XN0000123",
+  "year": 2022,
+  "make": "Chevrolet",
+  "model": "Bolt",
+  "mileage": 15000,
+  "repair_description": "High-voltage battery module replacement",
+  "part_number": "24299461",
+  "labor_hours": 4.2,
+  "vin_valid": true,
+  "vin_issues": [],
+  "coverage_eligible": true,
+  "coverage_reason": "VIN is consistent with a 2022 Chevrolet. Vehicle is within Voltec warranty limits (8yr/100k miles). Coverage approved."
 }
 
 ---
