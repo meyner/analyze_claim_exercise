@@ -1,15 +1,3 @@
-VIN_YEAR_MAP = {
-    "A": 1980, "B": 1981, "C": 1982, "D": 1983, "E": 1984,
-    "F": 1985, "G": 1986, "H": 1987, "J": 1988, "K": 1989,
-    "L": 1990, "M": 1991, "N": 1992, "P": 1993, "R": 1994,
-    "S": 1995, "T": 1996, "V": 1997, "W": 1998, "X": 1999,
-    "Y": 2000, "1": 2001, "2": 2002, "3": 2003, "4": 2004,
-    "5": 2005, "6": 2006, "7": 2007, "8": 2008, "9": 2009,
-    "A2": 2010, "B2": 2011, "C2": 2012, "D2": 2013, "E2": 2014,
-    "F2": 2015, "G2": 2016, "H2": 2017, "J2": 2018, "K2": 2019,
-    "L2": 2020, "M2": 2021, "N2": 2022, "P2": 2023, "R2": 2024,
-}
-
 # World Manufacturer Identifier (WMI) prefix -> make
 WMI_MAKE_MAP = {
     "1G1": "Chevrolet",
@@ -33,6 +21,21 @@ WMI_MAKE_MAP = {
     "WBA": "BMW",
     "WVW": "Volkswagen",
 }
+
+
+def get_years_for_vin_char(char: str) -> set[int]:
+    """
+    Returns the set of possible model years for a given VIN year character.
+    VIN year characters repeat every 30 years starting from 1980.
+    """
+    vin_chars = "ABCDEFGHJKLMNPRSTVWXY123456789"
+    if char not in vin_chars:
+        return set()
+    
+    index = vin_chars.index(char)
+    base_year = 1980 + index
+    # Return the last 3 cycles (covers 1980 to 2069)
+    return {base_year, base_year + 30, base_year + 60}
 
 
 def validate_vin(vin: str, make: str, model: str, year: int) -> dict:
@@ -78,13 +81,15 @@ def validate_vin(vin: str, make: str, model: str, year: int) -> dict:
 
     # Model year character (position 10, 0-indexed)
     year_char = vin[9].upper()
-    # Handle 2010+ two-key lookup by checking single-char first, then appending "2"
-    decoded_year = VIN_YEAR_MAP.get(year_char) or VIN_YEAR_MAP.get(year_char + "2")
-    if decoded_year is None:
+    valid_years = get_years_for_vin_char(year_char)
+    
+    if not valid_years:
         issues.append(f"Model year character '{year_char}' (position 10) is unrecognized.")
-    elif decoded_year != year:
+    elif year not in valid_years:
+        # For the error message, show the most likely year (the one closest to the input year)
+        best_match = min(valid_years, key=lambda x: abs(x - year))
         issues.append(
-            f"Model year character '{year_char}' (position 10) decodes to {decoded_year}, "
+            f"Model year character '{year_char}' (position 10) decodes to {best_match} (or {sorted(list(valid_years - {best_match}))}), "
             f"but extracted year is {year}."
         )
 
