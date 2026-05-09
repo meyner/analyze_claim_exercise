@@ -52,10 +52,10 @@ Return ONLY valid JSON matching the exact structure below. Do not include prose,
   "repair_description": string | null,
   "part_number": string | null,
   "labor_hours": float | null,
-  "vin_valid": bool,
-  "vin_issues": [string],
-  "coverage_eligible": bool,
-  "coverage_reason": string
+  "vin_valid": bool | null,
+  "vin_issues": [string] | null,
+  "coverage_eligible": bool | null,
+  "coverage_reason": string | null
 }
 ```
 
