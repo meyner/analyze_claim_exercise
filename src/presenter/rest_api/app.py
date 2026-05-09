@@ -5,7 +5,11 @@ from fastapi.responses import JSONResponse
 
 from .router import router
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(name)s %(message)s",
+    datefmt="%Y-%m-%dT%H:%M:%S",
+)
 logger = logging.getLogger(__name__)
 
 app = FastAPI(title="Analyze Claim API")
