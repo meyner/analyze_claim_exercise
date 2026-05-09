@@ -29,11 +29,11 @@ async def main():
     feature = ClaimAnalysisFeature()
     
     # 1. Valid Data Case
-    valid_ro = "RO# 847291 | VIN: 1G1FY6S00N0000123 | 2022 Chevrolet Bolt EV | Mileage: 12,340 | Repair: Replaced high-voltage battery module. | Parts: 24299461 | Labor: 4.2 hrs"
+    valid_ro = "RO# 847291 | VIN: 1G1FY6S0XN0000123 | 2022 Chevrolet Bolt EV | Mileage: 12,340 | Repair: Replaced high-voltage battery module. | Parts: 24299461 | Labor: 4.2 hrs"
     await run_analysis(feature, valid_ro, "VALID DATA RUN")
 
     # 2. Invalid Data Case (High mileage - out of warranty)
-    invalid_ro = "RO# 999999 | VIN: 1G1FY6S00N0000123 | 2022 Chevrolet Bolt EV | Mileage: 150,000 | Repair: Replaced high-voltage battery module. | Parts: 24299461 | Labor: 4.2 hrs"
+    invalid_ro = "RO# 999999 | VIN: 1G1FY6S0XN0000123 | 2022 Chevrolet Bolt EV | Mileage: 150,000 | Repair: Replaced high-voltage battery module. | Parts: 24299461 | Labor: 4.2 hrs"
     await run_analysis(feature, invalid_ro, "INVALID DATA RUN (OUT OF WARRANTY)")
 
 if __name__ == "__main__":
