@@ -3,7 +3,7 @@ import time
 import uuid
 from adapter.agents import GeminiAgent
 from adapter.agents.prompts import CLAIM_ANALYSIS_PROMPT
-from adapter.memory_db import claims_db
+from adapter.database.memory_db import claims_db
 from domain.models import AnalyzeClaimResponse
 
 logger = logging.getLogger(__name__)

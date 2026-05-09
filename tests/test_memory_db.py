@@ -1,5 +1,5 @@
 import pytest
-from adapter.memory_db import MemoryDatabase
+from adapter.database.memory_db import MemoryDatabase
 from domain.models import AnalyzeClaimResponse
 
 
