@@ -32,12 +32,14 @@ The API will be available at `http://localhost:8000`. You can view the interacti
 
 ## Design Decisions
 
-### 1. Agentic Workflow vs. Strict Pipeline
+### 1. Agentic Workflow: Tools as Capabilities
 Instead of a rigid "Extract → Validate → Check" pipeline, this project opts for an **agentic workflow**. While a deterministic pipeline is often preferred for high-stakes production systems, the agentic approach was chosen here to demonstrate a more flexible, reasoning-heavy alternative.
 
-**Trade-offs:**
-- **Pros (Flexibility & Intelligence):** The agent naturally handles "fuzzy" inputs and non-linear logic. If a VIN is missing, it skips validation; if a tool returns an error, it can reason about that failure and incorporate it into the final response without requiring complex `if/else` branching in Python.
-- **Cons (Determinism & Latency):** Agentic flows are inherently less predictable than hardcoded pipelines. They rely on the model's ability to follow instructions and can be slower due to the sequential nature of LLM-managed tool calls. **In this implementation, the end-to-end analysis typically takes about 5 seconds.**
+- **Tools as Options:** `validate_vin` and `check_warranty_coverage` are not just steps; they are **capabilities** granted to the agent. By exposing them as tools, the agent can choose *when* and *if* to call them based on the quality of the extracted data.
+- **Win Condition vs. Scripting:** Rather than scripting every edge case (e.g., "what if the VIN is 16 chars?"), we define a "Win Condition"—a complete, validated JSON response. The agent uses its internal logic to navigate the messy input toward this goal, using tools to resolve uncertainties.
+- **Trade-offs:**
+    - **Pros (Flexibility & Intelligence):** The agent naturally handles "fuzzy" inputs and non-linear logic. If a VIN is missing, it skips validation; if a tool returns an error, it can reason about that failure and incorporate it into the final response without requiring complex `if/else` branching in Python.
+    - **Cons (Determinism & Latency):** Agentic flows are inherently less predictable than hardcoded pipelines. They rely on the model's ability to follow instructions and can be slower due to the sequential nature of LLM-managed tool calls. **In this implementation, the end-to-end analysis typically takes about 5 seconds.**
 
 By giving the model **agency** over its tools, we shift the complexity from the "glue code" (state machines/graphs) to the **prompt and tool definitions**, allowing the system to adapt to messy, real-world repair order text more fluidly.
 
@@ -87,5 +89,12 @@ uv run pytest tests
 
 ---
 
-## Credits
-This project was completed using **Cursor**, **Gemini**, and **Claude**.
+## AI Tooling & Productivity
+
+This project was developed using a "Human-in-the-loop" AI-augmented workflow, leveraging specialized agents to accelerate development:
+
+- **Cursor:** Used as the primary IDE and orchestration layer. Its agentic capabilities allowed for rapid refactoring, such as moving the database logic from the presenter to the feature layer and ensuring architectural consistency across the project.
+- **Gemini (via Google GenAI SDK):** Served as the "brain" of the application. Its native support for **Automatic Function Calling (AFC)** and structured JSON output (via `response_json_schema`) significantly reduced the amount of manual "glue code" required to connect the LLM to the Python tools.
+- **Claude:** Utilized for high-level architectural planning, prompt engineering, and complex logic verification (such as the VIN checksum algorithm). 
+
+By using these tools in concert, we were able to implement a robust, tested, and observable system with a clean separation of concerns in a fraction of the time a traditional development cycle would require.
