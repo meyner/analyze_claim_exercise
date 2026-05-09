@@ -7,9 +7,11 @@ def check_warranty_coverage(
     part_number: str
 ) -> dict:
     """
-    Determines warranty coverage eligibility for a vehicle and repair. 
-    If all parameters (vin, make, model, year, mileage, part_number) are extracted from the text, 
-    this tool MUST be called to get coverage details.
+    Determines warranty coverage eligibility for a vehicle and repair.
+    This tool MUST be called when vin, make, model, year, mileage, and part_number
+    are all successfully extracted from the repair order text.
+    The coverage_reason in the final response must incorporate both this result
+    and the outcome of validate_vin.
 
     Args:
         vin: The Vehicle Identification Number.

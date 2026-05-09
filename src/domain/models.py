@@ -10,5 +10,7 @@ class AnalyzeClaimResponse(BaseModel):
     repair_description: str
     part_number: str
     labor_hours: float
+    vin_valid: bool
+    vin_issues: list[str]
     coverage_eligible: bool
     coverage_reason: str

@@ -2,14 +2,15 @@ import json
 import google.generativeai as genai
 from config import settings
 from .tools.warranty import check_warranty_coverage
+from .tools.validate_vin import validate_vin
 
 class GeminiAgent:
     def __init__(self, model_name: str = settings.gemini_model):
         genai.configure(api_key=settings.gemini_api_key)
-        # Initialize model with tools
+        # Initialize model with both tools
         self.model = genai.GenerativeModel(
             model_name=model_name,
-            tools=[check_warranty_coverage]
+            tools=[validate_vin, check_warranty_coverage]
         )
 
     async def analyze_claim(self, prompt: str, ro_text: str) -> dict:
