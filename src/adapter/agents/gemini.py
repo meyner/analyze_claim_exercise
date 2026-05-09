@@ -21,24 +21,6 @@ class GeminiAgent:
         self.model_name = model_name
         self.tools = [validate_vin, check_warranty_coverage]
 
-    def _log_agent_trace(self, response) -> None:
-        """Logs each part of the model response for agent observability."""
-        try:
-            parts = response.candidates[0].content.parts
-        except (IndexError, AttributeError):
-            logger.warning("agent_trace could not read response parts")
-            return
-
-        for part in parts:
-            if part.function_call:
-                logger.info(
-                    f"agent_tool_call tool={part.function_call.name} "
-                    f"args={dict(part.function_call.args)}"
-                )
-            elif part.text:
-                preview = part.text[:120].replace("\n", " ")
-                logger.info(f"agent_text_part preview=\"{preview}\"")
-
     async def analyze_claim(self, prompt: str, ro_text: str) -> dict:
         """
         Analyzes the RO text using Gemini with native function calling for warranty checks.
@@ -58,7 +40,6 @@ class GeminiAgent:
         )
 
         elapsed_ms = int((time.perf_counter() - t0) * 1000)
-        self._log_agent_trace(response)
         logger.info(f"agent_response elapsed_ms={elapsed_ms}")
 
         text = response.text

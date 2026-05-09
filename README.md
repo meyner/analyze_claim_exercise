@@ -42,9 +42,23 @@ Instead of a rigid "Extract → Validate → Check" pipeline, this project opts 
 By giving the model **agency** over its tools, we shift the complexity from the "glue code" (state machines/graphs) to the **prompt and tool definitions**, allowing the system to adapt to messy, real-world repair order text more fluidly.
 
 ### 2. Observability & Agent Tracing
-To solve the "black box" problem of LLMs, we implemented a structured logging system:
-- **Flow Capture:** Every step of the agentic process is logged, including the initial request, tool calls (even when using Automatic Function Calling), and the final parse result.
-- **Production Debugging:** This provides a "Langfuse-lite" trace in the logs, allowing developers to see exactly why an agent made a specific decision or where a tool call might have received unexpected arguments.
+Because the Google GenAI SDK uses **Automatic Function Calling (AFC)**, the model's internal tool-calling turns are handled by the SDK and are not exposed in the final response object. Attempting to read them from the response would only show the final text output.
+
+Instead, logging is placed directly inside the tool functions, capturing both inputs and return values at the boundary where Python code actually executes. This gives an accurate, complete trace of what the agent did:
+
+```
+analyze_claim_start   claim_id=... ro_length=161
+agent_request         model=gemini-2.5-flash
+tool_call             validate_vin vin=1G1FY6S0XN0000123 make=Chevrolet year=2022
+tool_result           validate_vin vin_valid=True issues=[]
+tool_call             check_warranty_coverage vin=1G1FY6S0XN0000123 mileage=12340
+tool_result           check_warranty_coverage eligible=True warranty_type=Voltec
+agent_response        elapsed_ms=5312
+agent_parse_ok        coverage_eligible=True
+analyze_claim_complete claim_id=... vin=1G1FY6S0XN0000123 coverage_eligible=True
+```
+
+If a claim is wrongly denied, you can look up the `claim_id` in the logs and see exactly what the tool returned — not just what the model was asked to call.
 
 ### 3. Graceful Degradation (Always-Responding)
 The system is designed to be robust against "garbage" data or missing fields:

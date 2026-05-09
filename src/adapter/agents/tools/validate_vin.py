@@ -90,19 +90,28 @@ def validate_vin(vin: str, make: str, model: str, year: int) -> dict:
         }
     """
     logger.info(f"tool_call validate_vin vin={vin} make={make} year={year}")
+
+    def _result(valid: bool, issues: list) -> dict:
+        result = {"vin_valid": valid, "vin_issues": issues}
+        if valid:
+            logger.info("tool_result validate_vin vin_valid=True issues=[]")
+        else:
+            logger.warning(f"tool_result validate_vin vin_valid=False issues={issues}")
+        return result
+
     if not vin or not isinstance(vin, str):
-        return {"vin_valid": False, "vin_issues": ["VIN is missing or not a valid string."]}
+        return _result(False, ["VIN is missing or not a valid string."])
     if not make or not isinstance(make, str):
-        return {"vin_valid": False, "vin_issues": ["Make is missing or not a valid string."]}
+        return _result(False, ["Make is missing or not a valid string."])
     if not isinstance(year, int):
-        return {"vin_valid": False, "vin_issues": [f"Year must be an integer, got: {type(year).__name__}."]}
+        return _result(False, [f"Year must be an integer, got: {type(year).__name__}."])
 
     issues = []
 
     # Basic length check
     if len(vin) != 17:
         issues.append(f"VIN must be exactly 17 characters, got {len(vin)}.")
-        return {"vin_valid": False, "vin_issues": issues}
+        return _result(False, issues)
 
     # Forbidden characters (I, O, Q are not allowed in VINs)
     forbidden = set("IOQ")
@@ -144,4 +153,4 @@ def validate_vin(vin: str, make: str, model: str, year: int) -> dict:
             f"but extracted year is {year}."
         )
 
-    return {"vin_valid": len(issues) == 0, "vin_issues": issues}
+    return _result(len(issues) == 0, issues)

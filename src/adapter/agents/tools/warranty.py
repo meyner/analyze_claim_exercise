@@ -28,21 +28,28 @@ def check_warranty_coverage(
     logger.info(f"tool_call check_warranty_coverage vin={vin} mileage={mileage}")
     # NOTE: part_number is not used for anything in this mocked tool
 
+    def _result(result: dict) -> dict:
+        if result["eligible"]:
+            logger.info(f"tool_result check_warranty_coverage eligible=True warranty_type={result['warranty_type']}")
+        else:
+            logger.warning(f"tool_result check_warranty_coverage eligible=False reason=\"{result['reason']}\"")
+        return result
+
     if not vin or not isinstance(vin, str):
-        return {"eligible": False, "reason": "Warranty check failed: VIN is missing or invalid.", "warranty_type": "None"}
+        return _result({"eligible": False, "reason": "Warranty check failed: VIN is missing or invalid.", "warranty_type": "None"})
     if not isinstance(mileage, int):
-        return {"eligible": False, "reason": f"Warranty check failed: mileage must be an integer, got {type(mileage).__name__}.", "warranty_type": "None"}
+        return _result({"eligible": False, "reason": f"Warranty check failed: mileage must be an integer, got {type(mileage).__name__}.", "warranty_type": "None"})
 
     # Reasonable stub/mock for testing
     if "1G1" in vin and mileage < 100000:
-        return {
+        return _result({
             "eligible": True,
             "reason": f"Vehicle within {year} {make} {model} warranty limits.",
             "warranty_type": "Voltec" if "Bolt" in model else "Powertrain"
-        }
-    
-    return {
+        })
+
+    return _result({
         "eligible": False,
         "reason": "Vehicle outside of standard warranty coverage limits.",
         "warranty_type": "None"
-    }
+    })
