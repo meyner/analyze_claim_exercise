@@ -46,14 +46,3 @@ class GeminiAgent:
             return json.loads(text)
         except json.JSONDecodeError:
             raise ValueError(f"Failed to parse structured response: {response.text}")
-
-    async def generate_completion(self, prompt: str, content: str) -> str:
-        """
-        Runs an LLM completion using the Gemini model.
-        """
-        full_prompt = f"{prompt}\n\nInput Data:\n{content}"
-        response = await self.client.aio.models.generate_content(
-            model=self.model_name,
-            contents=full_prompt
-        )
-        return response.text
